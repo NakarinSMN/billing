@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base Layer ───────────────────────────────────────────────────── */
+@layer base {
+  /* Color variables for light/dark themes */
+  :root {
+    /* core UI colors */
+    --background:           0 0% 86%;
+    --foreground:           240 10% 3.9%;
+    --card:                 0 0% 100%;
+    --card-foreground:      240 10% 3.9%;
+    --popover:              0 0% 100%;
+    --popover-foreground:   240 10% 3.9%;
+    --primary:              240 5.9% 10%;
+    --primary-foreground:   0 0% 98%;
+    --secondary:            240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted:                240 4.8% 95.9%;
+    --muted-foreground:     240 3.8% 46.1%;
+    --accent:               240 4.8% 95.9%;
+    --accent-foreground:    240 5.9% 10%;
+    --destructive:          0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border:               240 5.9% 90%;
+    --input:                240 5.9% 90%;
+    --ring:                 240 5.9% 10%;
+    --radius:               0.5rem;
+
+    /* scrollbar variables */
+    --scrollbar-size:       8px;
+    --scrollbar-width-prop: thin;
+    --scrollbar-track:      229 231%? typo? Actually want hsl var values. Should be corrected.
+  }
+  .dark {
+    --background:           240 10% 15%;
+    --foreground:           0 0% 98%;
+    --card:                 240 10% 20%;
+    --card-foreground:      0 0% 98%;
+    --popover:              240 10% 20%;
+    --popover-foreground:   0 0% 98%;
+    --primary:              60 54% 50%;
+    --primary-foreground:   240 5.9% 10%;
+    --secondary:            240 3.7% 24%;
+    --secondary-foreground: 0 0% 98%;
+    --muted:                240 3.7% 24%;
+    --muted-foreground:     240 5% 64.9%;
+    --accent:               60 54% 50%;
+    --accent-foreground:    240 5.9% 10%;
+    --destructive:          0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border:               240 3.7% 24%;
+    --input:                240 3.7% 24%;
+    --ring:                 240 4.9% 83.9%;
+  }
+
+  /* apply border color globally */
+  * {
+    @apply border-border;
+  }
+
+  /* page background & text */
+  body {
+    background-color: hsl(var(--background));
+    color:            hsl(var(--foreground));
+    overflow-x:       hidden;
+  }
+
+  /* headings use Kanit */
+  h1,h2,h3,h4,h5,h6 {
+    @apply font-kanit;
+  }
+}
+
+/* ─── Components Layer ──────────────────────────────────────────────── */
+@layer components {
+  .nav-button {
+    @apply rounded-full px-6 py-2 text-sm font-medium
+           transition-colors duration-300 transform hover:shadow-md;
+    background-color: hsl(var(--card) / 0.7);
+    color:            hsl(var(--foreground));
+  }
+
+  @layer components {
+    .card {
+      @apply rounded-2xl shadow-lg p-6; /* ลบ transition-transform และ hover:scale-... */
+      background-color: hsl(var(--card));
+      color:            hsl(var(--card-foreground));
+    }
+  }
+  
+  .nav-button:hover {
+    background-color: hsl(var(--card));
+  }
+
+  .form-input {
+    @apply w-full rounded-md px-3 py-2 text-sm transition ease-in-out focus:outline-none;
+    background-color: hsl(var(--input));
+    color:            hsl(var(--foreground));
+    border:           1px solid hsl(var(--border));
+    --tw-ring-color:  hsl(var(--ring));
+  }
+  .form-input:focus {
+    border-color: transparent;
+    box-shadow:   0 0 0 2px var(--tw-ring-color);
+  }
+  .form-input::placeholder {
+    color: hsl(var(--muted-foreground));
+  }
+  .form-input:disabled {
+    background-color: hsl(var(--muted));
+    color:            hsl(var(--muted-foreground));
+    cursor:           not-allowed;
+  }
+  .form-input-error {
+    border-color:    hsl(var(--destructive));
+    --tw-ring-color: hsl(var(--destructive));
+  }
+
+  .form-button {
+    @apply px-4 py-2 rounded-md transition-colors;
+    background-color: hsl(var(--primary));
+    color:            hsl(var(--primary-foreground));
+  }
+  .form-button:hover {
+    background-color: hsl(var(--primary) / 0.9);
+  }
+
+  .card {
+    @apply rounded-2xl shadow-lg p-6 transition-transform hover:scale-[1.02];
+    background-color: hsl(var(--card));
+    color:            hsl(var(--card-foreground));
+  }
+
+  .popover {
+    background-color: hsl(var(--popover));
+    color:            hsl(var(--popover-foreground));
+  }
+}
+
+/* ─── Utilities Layer ──────────────────────────────────────────────── */
+@layer utilities {
+  .smooth-scroll {
+    scroll-behavior: smooth;
+  }
+
+  .truncate-tooltip {
+    @apply truncate relative group;
+  }
+  .truncate-tooltip:hover::after {
+    content: attr(data-tooltip);
+    @apply absolute left-0 top-full mt-1 w-max max-w-xs
+           rounded p-2 text-xs shadow-lg whitespace-normal z-10;
+    background-color: hsl(var(--secondary));
+    color:            hsl(var(--secondary-foreground));
+  }
+
+  /* ─── Custom Scrollbar ───────────────────────────────────────────── */
+  .scrollbar-custom {
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156,163,175,1) rgba(229,231,235,1);
+  }
+
+  /* WebKit browsers */
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: rgba(229,231,235,1);
+  }
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background-color: rgba(156,163,175,1);
+    border-radius: 4px;
+    border: 2px solid rgba(229,231,235,1);
+  }
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(107,114,128,1);
+  }
+
+  /* Dark mode */
+  .dark .scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(107,114,128,1) rgba(55,65,81,1);
+  }
+  .dark .scrollbar-custom::-webkit-scrollbar-track {
+    background: rgba(55,65,81,1);
+  }
+  .dark .scrollbar-custom::-webkit-scrollbar-thumb {
+    background-color: rgba(107,114,128,1);
+    border: 2px solid rgba(55,65,81,1);
+  }
+  .dark .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156,163,175,1);
+  }
+
+}
