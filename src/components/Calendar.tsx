@@ -128,7 +128,7 @@ export default function Calendar({
 
   return (
     <div
-      className={`w-full max-w-lg mx-auto p-4 overflow-x-hidden bg-card text-card-foreground rounded-lg ${className}`}
+      className={`w-full max-w-[500px] p-4 overflow-x-hidden bg-card text-card-foreground rounded-lg ${className}`}
     >
       {/* Header: year/month controls */}
       <div className="flex items-center justify-between mb-4">
