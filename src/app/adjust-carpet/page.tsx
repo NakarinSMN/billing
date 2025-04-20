@@ -1,10 +1,10 @@
-// src/app/adjust-carpet-v2/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { CarpetIcon } from "@/components/icons/carpet-icon";
 import Calendar from "@/components/Calendar";
+import AnimatedNumber from "@/components/AnimatedNumber";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdjustCarpetPageV2() {
@@ -100,12 +100,6 @@ export default function AdjustCarpetPageV2() {
     }
   }, [customDays, activeTab]);
 
-  const formatNumber = (val: string) =>
-    parseFloat(val).toLocaleString("th-TH", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-
   const labelMap: Record<string, string> = {
     p: "รย.1",
     m: "รย.2",
@@ -167,7 +161,7 @@ export default function AdjustCarpetPageV2() {
               className="grid grid-cols-1 md:grid-cols-2 gap-4"
             >
               <div>
-                <p className="mb-1">วันเริ่มต้น</p>
+                <p className="mb-6 text-base font-medium text-center">วันเริ่มต้น</p>
                 <Calendar
                   selectedDate={startDate}
                   onSelectDate={setStartDate}
@@ -175,12 +169,13 @@ export default function AdjustCarpetPageV2() {
                 />
               </div>
               <div>
-                <p className="mb-1">วันสิ้นสุด (+1 ปี อัตโนมัติ)</p>
+                <p className="mb-6 text-base font-medium text-center">วันสิ้นสุด (+1 ปี อัตโนมัติ)</p>
                 <Calendar
                   selectedDate={endDate}
                   onSelectDate={setEndDate}
                   className="w-full max-w-xs mx-auto"
                 />
+
               </div>
             </motion.div>
           ) : (
@@ -225,7 +220,9 @@ export default function AdjustCarpetPageV2() {
                   className="card p-4 text-center"
                 >
                   <div className="font-semibold">{labelMap[k]}</div>
-                  <div className="mt-1">{formatNumber(v)} บาท</div>
+                  <div className="mt-1">
+                    <AnimatedNumber value={parseFloat(v)} /> บาท
+                  </div>
                 </motion.div>
               ))}
             </div>
