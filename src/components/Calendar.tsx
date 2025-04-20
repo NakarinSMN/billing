@@ -128,22 +128,14 @@ export default function Calendar({
 
   return (
     <div
-      className={`w-full max-w-lg mx-auto p-4 bg-card text-card-foreground rounded-lg ${className}`}
+      className={`w-full max-w-lg mx-auto p-4 overflow-x-hidden bg-card text-card-foreground rounded-lg ${className}`}
     >
       {/* Header: year/month controls */}
       <div className="flex items-center justify-between mb-4">
-        <button
-          onClick={prevYear}
-          className="p-2"
-          aria-label="Previous year"
-        >
+        <button onClick={prevYear} aria-label="Previous year">
           <ChevronsLeft className="w-5 h-5 text-primary" />
         </button>
-        <button
-          onClick={prevMonth}
-          className="p-2"
-          aria-label="Previous month"
-        >
+        <button onClick={prevMonth} aria-label="Previous month">
           <ChevronLeft className="w-5 h-5 text-primary" />
         </button>
         <div className="flex items-center space-x-2 relative">
@@ -151,7 +143,7 @@ export default function Calendar({
           <div className="relative" ref={monthRef}>
             <button
               onClick={() => setIsMonthOpen(!isMonthOpen)}
-              className="py-1 px-2 inline-flex items-center min-w-[90px]"
+              className="py-1 px-2 w-28 flex items-center justify-center"
             >
               <span className="text-foreground">{months[currentDate.getMonth()]}</span>
               <ChevronDown className="w-4 h-4 ml-1 text-primary" />
@@ -186,7 +178,7 @@ export default function Calendar({
           <div className="relative" ref={yearRef}>
             <button
               onClick={() => setIsYearOpen(!isYearOpen)}
-              className="py-1 px-2 inline-flex items-center min-w-[80px]"
+              className="py-1 px-2 w-20 flex items-center justify-center"
             >
               <span className="text-foreground">{currentDate.getFullYear()}</span>
               <ChevronDown className="w-4 h-4 ml-1 text-primary" />
@@ -218,18 +210,10 @@ export default function Calendar({
             )}
           </div>
         </div>
-        <button
-          onClick={nextMonth}
-          className="p-2"
-          aria-label="Next month"
-        >
+        <button onClick={nextMonth} aria-label="Next month">
           <ChevronRight className="w-5 h-5 text-primary" />
         </button>
-        <button
-          onClick={nextYear}
-          className="p-2"
-          aria-label="Next year"
-        >
+        <button onClick={nextYear} aria-label="Next year">
           <ChevronsRight className="w-5 h-5 text-primary" />
         </button>
       </div>
