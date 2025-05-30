@@ -37,13 +37,17 @@ export default function AdjustCarpetPageV2() {
   }, []);
 
   const rateFactors: Record<string, number> = {
-    p: 645.21,
-    m: 1182.35,
-    l: 967.28,
-    cys: 161.57,
-    cym: 323.14,
-    cyl: 430.14,
-    cyk: 645.21,
+    A: 645.21,
+    B: 1182.35,
+    C: 2493.10,
+    D: 967.28,
+    E: 1310.75,
+    F: 1408.12,
+    G: 1826.49,
+    H: 161.57,
+    I: 323.14,
+    J: 430.14,
+    K: 645.21,
   };
 
   useEffect(() => {
@@ -101,13 +105,17 @@ export default function AdjustCarpetPageV2() {
   }, [customDays, activeTab]);
 
   const labelMap: Record<string, string> = {
-    p: "รย.1",
-    m: "รย.2",
-    l: "รย.3",
-    cys: "0-75cc",
-    cym: "76-125cc",
-    cyl: "126-150cc",
-    cyk: "150cc ขึ้นไป",
+    A: "รย.1",
+    B: "รย.2",
+    C: "รย.2 เชิงพานิชย์",
+    D: "รย.3",
+    E: "รย.3 นน.เกิน 3-6 ตัน",
+    F: "รย.3 นน.เกิน 6-12 ตัน",
+    G: "รย.3 นน.เกิน 12 ตัน",
+    H: "รย.12 ไม่เกิน 75 ซีซี",
+    I: "รย.12 เกิน 75-125 ซีซี",
+    J: "รย.12 เกิน 125-150 ซีซี",
+    K: "รย.12 เกิน 150 ซีซี",
   };
 
   return (
