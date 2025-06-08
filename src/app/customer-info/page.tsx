@@ -43,25 +43,24 @@ export default function CustomerInfoPage() {
     async function fetchData() {
       try {
         const res = await fetch(
-          "https://script.google.com/macros/s/AKfycbxN9rG3NhDyhlXVKgNndNcJ6kHopPaf5GRma_dRYjtP64svMYUFCSALwTEX4mYCHoDd6g/exec?getAll=1"
+          `https://script.google.com/macros/s/AKfycbxN9rG3NhDyhlXVKgNndNcJ6kHopPaf5GRma_dRYjtP64svMYUFCSALwTEX4mYCHoDd6g/exec?getAll=1`
         )
         const json = await res.json()
-        console.log("📦 ได้ข้อมูลจาก Google Sheet:", json)
+        console.log('📦 ได้ข้อมูลจาก Google Sheet:', json)
 
         const formatted = (json.data || []).map(item => {
-          const dateTime = item['วันที่จดทะเบียน'] || ''
-          const rawDate = dateTime.includes('T')
-            ? dateTime.split('T')[0]
-            : dateTime
+          // ดึงฟิลด์เวลาที่ลงทะเบียน
+          const dtField = item['เวลาที่ลงทะเบียน'] || ''
+          const rawDate = dtField.includes('T') ? dtField.split('T')[0] : dtField
           return {
             licensePlate: item['ทะเบียนรถ'] || '',
             customerName: item['ชื่อลูกค้า'] || '',
             phone: item['เบอร์ติดต่อ'] || '',
             registerDate: rawDate,
-            status: item['สถานะ'] || 'รอดำเนินการ',
+            status: item['สถานะ'] || item['สถานะการเตือน'] || 'รอดำเนินการ',
           }
         })
-
+        console.log('🗃 Formatted data:', formatted)
         setData(formatted)
       } catch (err) {
         console.error('❌ ดึงข้อมูลไม่สำเร็จ:', err)
@@ -70,11 +69,6 @@ export default function CustomerInfoPage() {
     fetchData()
   }, [])
 
-  // log raw data whenever it updates
-  useEffect(() => {
-    console.log('🗃 Raw data state:', data)
-  }, [data])
-
   const resetFilters = () => {
     setSearch('')
     setFilterDay('')
@@ -82,26 +76,27 @@ export default function CustomerInfoPage() {
     setFilterYear('')
   }
 
-  const filteredData = data.filter(item => {
-    if (!item.registerDate) return false
-    const [year, monthRaw, dayRaw] = item.registerDate.split('-')
-    const day = String(Number(dayRaw)).padStart(2, '0')
-    const monthMap = [
-      'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
-      'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
-    ]
-    const month = monthMap[Number(monthRaw) - 1]
-    const matchSearch =
-      item.licensePlate.includes(search) ||
-      item.customerName.includes(search)
-    const matchDay = !filterDay || day === filterDay.padStart(2, '0')
-    const matchMonth = !filterMonth || month === filterMonth
-    const matchYear = !filterYear || year === filterYear
-    return matchSearch && matchDay && matchMonth && matchYear
-  })
+  const filteredData = data
+    .filter(item => !!item.registerDate)
+    .filter(item => {
+      const [year, monthRaw, dayRaw] = item.registerDate.split('-')
+      const day = String(Number(dayRaw)).padStart(2, '0')
+      const monthMap = [
+        'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+        'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+      ]
+      const month = monthMap[Number(monthRaw) - 1] || ''
+      const matchSearch =
+        item.licensePlate.includes(search) || item.customerName.includes(search)
+      const matchDay = !filterDay || day === filterDay.padStart(2, '0')
+      const matchMonth = !filterMonth || month === filterMonth
+      const matchYear = !filterYear || year === filterYear
+      return matchSearch && matchDay && matchMonth && matchYear
+    })
 
-  // log filtered results
-  console.log('📊 Filtered Data:', filteredData)
+  useEffect(() => {
+    console.log('📊 Filtered data:', filteredData)
+  }, [filteredData])
 
   const days = Array.from({ length: 31 }, (_, i) => `${i + 1}`)
   const months = [
@@ -203,40 +198,21 @@ export default function CustomerInfoPage() {
             <table className="w-full text-left text-sm text-neutral-900 dark:text-gray-100">
               <thead>
                 <tr className="border-b border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400">
-                  <th className="py-2">
-                    <FontAwesomeIcon icon={faCar} className="mr-2" />ทะเบียนรถ
-                  </th>
-                  <th className="py-2">
-                    <FontAwesomeIcon icon={faCalendarDay} className="mr-2" />วันที่
-                  </th>
-                  <th className="py-2">
-                    <FontAwesomeIcon icon={faUser} className="mr-2" />ลูกค้า
-                  </th>
-                  <th className="py-2">
-                    <FontAwesomeIcon icon={faPhone} className="mr-2" />เบอร์โทร
-                  </th>
-                  <th className="py-2">
-                    <FontAwesomeIcon icon={faClock} className="mr-2" />สถานะ
-                  </th>
+                  <th className="py-2"><FontAwesomeIcon icon={faCar} className="mr-2" />ทะเบียนรถ</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faCalendarDay} className="mr-2" />วันที่</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faUser} className="mr-2" />ลูกค้า</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faPhone} className="mr-2" />เบอร์โทร</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faClock} className="mr-2" />สถานะ</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredData.map((item, i) => (
-                  <tr
-                    key={i}
-                    className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
-                  >
+                  <tr key={i} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
                     <td className="py-2">{item.licensePlate}</td>
                     <td className="py-2">{item.registerDate}</td>
                     <td className="py-2">{item.customerName}</td>
                     <td className="py-2">{item.phone}</td>
-                    <td className="py-2">
-                      <span
-                        className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${statusColor[item.status] || 'bg-gray-500 text-white'}`}
-                      >
-                        <FontAwesomeIcon icon={statusIcon[item.status] || faClock} /> {item.status}
-                      </span>
-                    </td>
+                    <td className="py-2"><span className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${statusColor[item.status]}`}><FontAwesomeIcon icon={statusIcon[item.status]} /> {item.status}</span></td>
                   </tr>
                 ))}
               </tbody>
@@ -246,20 +222,7 @@ export default function CustomerInfoPage() {
 
         <div className="text-center mt-6">
           <Link href="/" className="nav-button inline-flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-arrow-left"
-            >
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            กลับหน้าหลัก
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-left"><path d="M19 12H5M12 19l-7-7 7-7" /></svg> กลับหน้าหลัก
           </Link>
         </div>
       </div>
