@@ -45,7 +45,18 @@ export default function CustomerInfoPage() {
         const res = await fetch("https://script.google.com/macros/s/AKfycbxN9rG3NhDyhlXVKgNndNcJ6kHopPaf5GRma_dRYjtP64svMYUFCSALwTEX4mYCHoDd6g/exec?getAll=1");
         const json = await res.json();
         console.log("📦 ได้ข้อมูลจาก Google Sheet:", json);
-        setData(json.data || []);
+
+        const formatted = json.data.map((item) => {
+          const rawDate = item['วันที่จดทะเบียน']?.split('T')[0] || ''
+          return {
+            licensePlate: item['ทะเบียนรถ'] || '',
+            customerName: item['ชื่อลูกค้า'] || '',
+            phone: item['เบอร์ติดต่อ'] || '',
+            registerDate: rawDate,
+            status: item['สถานะ'] || 'รอดำเนินการ'
+          }
+        })
+        setData(formatted)
       } catch (err) {
         console.error("❌ ดึงข้อมูลไม่สำเร็จ:", err);
       }
