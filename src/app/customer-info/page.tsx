@@ -74,7 +74,7 @@ export default function CustomerInfoPage() {
     setFilterYear('')
   }
 
-  const filteredData = data.filter(item => {
+  const filteredData = data(item => {
     if (!item.registerDate) return false
     const [year, monthRaw, dayRaw] = item.registerDate.split('-')
     const day = String(Number(dayRaw)).padStart(1, '0')
