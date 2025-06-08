@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
 import { CustomerIcon } from '@/components/icons/customer-icon'
 
 const mockData = [
@@ -27,18 +28,6 @@ const mockData = [
   },
 ]
 
-const filteredData = mockData.filter(item => {
-  const [day, monthText, year] = item.date.split(' ') // "8 มิ.ย. 2025"
-
-  const matchSearch = item.licensePlate.includes(search) || item.customer.includes(search)
-  const matchDay = !filterDay || day === filterDay
-  const matchMonth = !filterMonth || monthText === filterMonth
-  const matchYear = !filterYear || year === filterYear
-
-  return matchSearch && matchDay && matchMonth && matchYear
-})
-
-
 const statusColor = {
   'ต่อภาษีแล้ว': 'bg-green-700 text-white',
   'ใกล้ครบกำหนด': 'bg-yellow-600 text-white',
@@ -47,6 +36,25 @@ const statusColor = {
 }
 
 export default function CustomerInfoPage() {
+  const [search, setSearch] = useState('')
+  const [filterDay, setFilterDay] = useState('')
+  const [filterMonth, setFilterMonth] = useState('')
+  const [filterYear, setFilterYear] = useState('')
+
+  const filteredData = mockData.filter(item => {
+    const [day, month, year] = item.date.split(' ')
+    const matchSearch =
+      item.licensePlate.includes(search) || item.customer.includes(search)
+    const matchDay = !filterDay || day === filterDay
+    const matchMonth = !filterMonth || month === filterMonth
+    const matchYear = !filterYear || year === filterYear
+    return matchSearch && matchDay && matchMonth && matchYear
+  })
+
+  const days = Array.from({ length: 31 }, (_, i) => `${i + 1}`)
+  const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
+  const years = ['2024', '2025', '2026']
+
   return (
     <div className="flex min-h-screen flex-col items-center p-4 page-transition">
       <div className="w-full max-w-4xl">
@@ -58,6 +66,34 @@ export default function CustomerInfoPage() {
         <div className="border-t border-gray-300 dark:border-gray-700 mb-6" />
 
         <div className="bg-white/70 dark:bg-gray-800/70 rounded-md p-6 shadow-sm">
+          <div className="flex flex-wrap gap-4 mb-4">
+            <input
+              type="text"
+              placeholder="ค้นหาทะเบียนรถ / ชื่อลูกค้า"
+              className="flex-1 px-4 py-2 rounded-lg bg-neutral-800 text-white"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            <select className="rounded-lg px-3 py-2 bg-neutral-800 text-white" value={filterDay} onChange={e => setFilterDay(e.target.value)}>
+              <option value="">วัน</option>
+              {days.map(day => (
+                <option key={day} value={day}>{day}</option>
+              ))}
+            </select>
+            <select className="rounded-lg px-3 py-2 bg-neutral-800 text-white" value={filterMonth} onChange={e => setFilterMonth(e.target.value)}>
+              <option value="">เดือน</option>
+              {months.map(month => (
+                <option key={month} value={month}>{month}</option>
+              ))}
+            </select>
+            <select className="rounded-lg px-3 py-2 bg-neutral-800 text-white" value={filterYear} onChange={e => setFilterYear(e.target.value)}>
+              <option value="">ปี</option>
+              {years.map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-gray-800 dark:text-gray-100">
               <thead>
@@ -70,7 +106,7 @@ export default function CustomerInfoPage() {
                 </tr>
               </thead>
               <tbody>
-                {mockData.map((item, i) => (
+                {filteredData.map((item, i) => (
                   <tr key={i} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
                     <td className="py-2">{item.licensePlate}</td>
                     <td className="py-2">{item.date}</td>
