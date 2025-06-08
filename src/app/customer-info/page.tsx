@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { CustomerIcon } from '@/components/icons/customer-icon'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -17,30 +17,6 @@ import {
   faExclamationTriangle,
   faTimesCircle
 } from '@fortawesome/free-solid-svg-icons'
-
-const mockData = [
-  {
-    licensePlate: 'ฎอ-5100 กทม',
-    date: '8 มิ.ย. 2025',
-    customer: 'สมชาย แสนดี',
-    service: '064-993-6361',
-    status: 'ต่อภาษีแล้ว',
-  },
-  {
-    licensePlate: 'กข-2345 ชลบุรี',
-    date: '8 มิ.ย. 2025',
-    customer: 'สมหญิง มีสุข',
-    service: '064-993-6361',
-    status: 'ใกล้ครบกำหนด',
-  },
-  {
-    licensePlate: 'ขย-9999 ลพบุรี',
-    date: '7 มิ.ย. 2025',
-    customer: 'ประสิทธิ์ รักดี',
-    service: '064-993-6361',
-    status: 'เกินกำหนด',
-  },
-]
 
 const statusColor = {
   'ต่อภาษีแล้ว': 'bg-green-600 dark:bg-green-700 text-white',
@@ -61,6 +37,20 @@ export default function CustomerInfoPage() {
   const [filterDay, setFilterDay] = useState('')
   const [filterMonth, setFilterMonth] = useState('')
   const [filterYear, setFilterYear] = useState('')
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch('https://script.google.com/macros/s/AKfycbxN9rG3NhDyhlXVKgNndNcJ6kHopPaf5GRma_dRYjtP64svMYUFCSALwTEX4mYCHoDd6g/exec')
+        const json = await res.json()
+        setData(json.data || [])
+      } catch (err) {
+        console.error('เกิดข้อผิดพลาด:', err)
+      }
+    }
+    fetchData()
+  }, [])
 
   const resetFilters = () => {
     setSearch('')
@@ -69,10 +59,12 @@ export default function CustomerInfoPage() {
     setFilterYear('')
   }
 
-  const filteredData = mockData.filter(item => {
-    const [day, month, year] = item.date.split(' ')
-    const matchSearch =
-      item.licensePlate.includes(search) || item.customer.includes(search)
+  const filteredData = data.filter(item => {
+    const [year, monthRaw, dayRaw] = item.registerDate.split('-')
+    const day = String(Number(dayRaw)).padStart(1, '0')
+    const monthMap = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
+    const month = monthMap[Number(monthRaw) - 1]
+    const matchSearch = item.licensePlate.includes(search) || item.customerName.includes(search)
     const matchDay = !filterDay || day === filterDay
     const matchMonth = !filterMonth || month === filterMonth
     const matchYear = !filterYear || year === filterYear
@@ -155,12 +147,12 @@ export default function CustomerInfoPage() {
                 {filteredData.map((item, i) => (
                   <tr key={i} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
                     <td className="py-2">{item.licensePlate}</td>
-                    <td className="py-2">{item.date}</td>
-                    <td className="py-2">{item.customer}</td>
-                    <td className="py-2">{item.service}</td>
+                    <td className="py-2">{item.registerDate}</td>
+                    <td className="py-2">{item.customerName}</td>
+                    <td className="py-2">{item.phone}</td>
                     <td className="py-2">
-                      <span className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${statusColor[item.status]}`}>
-                        <FontAwesomeIcon icon={statusIcon[item.status]} /> {item.status}
+                      <span className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${statusColor[item.status] || 'bg-gray-500 text-white'}`}>
+                        <FontAwesomeIcon icon={statusIcon[item.status] || faClock} /> {item.status}
                       </span>
                     </td>
                   </tr>
