@@ -27,6 +27,18 @@ const mockData = [
   },
 ]
 
+const filteredData = mockData.filter(item => {
+  const [day, monthText, year] = item.date.split(' ') // "8 มิ.ย. 2025"
+
+  const matchSearch = item.licensePlate.includes(search) || item.customer.includes(search)
+  const matchDay = !filterDay || day === filterDay
+  const matchMonth = !filterMonth || monthText === filterMonth
+  const matchYear = !filterYear || year === filterYear
+
+  return matchSearch && matchDay && matchMonth && matchYear
+})
+
+
 const statusColor = {
   'ต่อภาษีแล้ว': 'bg-green-700 text-white',
   'ใกล้ครบกำหนด': 'bg-yellow-600 text-white',
