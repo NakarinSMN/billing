@@ -44,9 +44,10 @@ export default function CustomerInfoPage() {
       try {
         const res = await fetch('https://script.google.com/macros/s/AKfycbxN9rG3NhDyhlXVKgNndNcJ6kHopPaf5GRma_dRYjtP64svMYUFCSALwTEX4mYCHoDd6g/exec')
         const json = await res.json()
+        console.log('📦 ได้ข้อมูลจาก Google Sheet:', json); // ✅ ลอง log ดู
         setData(json.data || [])
       } catch (err) {
-        console.error('เกิดข้อผิดพลาด:', err)
+        console.error('❌ ดึงข้อมูลไม่สำเร็จ:', err);
       }
     }
     fetchData()
