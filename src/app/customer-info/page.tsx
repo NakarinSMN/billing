@@ -9,21 +9,21 @@ const mockData = [
     licensePlate: 'ฎอ-5100 กทม',
     date: '8 มิ.ย. 2025',
     customer: 'สมชาย แสนดี',
-    service: 'ลงทะเบียนรถ',
+    service: '064-993-6361',
     status: 'ต่อภาษีแล้ว',
   },
   {
     licensePlate: 'กข-2345 ชลบุรี',
     date: '8 มิ.ย. 2025',
     customer: 'สมหญิง มีสุข',
-    service: 'ลงทะเบียนรถ',
+    service: '064-993-6361',
     status: 'ใกล้ครบกำหนด',
   },
   {
     licensePlate: 'ขย-9999 ลพบุรี',
     date: '7 มิ.ย. 2025',
     customer: 'ประสิทธิ์ รักดี',
-    service: 'ลงทะเบียนรถ',
+    service: '064-993-6361',
     status: 'เกินกำหนด',
   },
 ]
@@ -101,7 +101,7 @@ export default function CustomerInfoPage() {
                   <th className="py-2">ทะเบียนรถ</th>
                   <th className="py-2">วันที่</th>
                   <th className="py-2">ลูกค้า</th>
-                  <th className="py-2">บริการ</th>
+                  <th className="py-2">เบอร์โทร</th>
                   <th className="py-2">สถานะ</th>
                 </tr>
               </thead>
