@@ -4,7 +4,19 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { CustomerIcon } from '@/components/icons/customer-icon'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faCalendarDay, faCalendarAlt, faCalendar, faCar, faUser, faPhone, faClock, faCheckCircle, faExclamationTriangle, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
+import {
+  faSearch,
+  faCalendarDay,
+  faCalendarAlt,
+  faCalendar,
+  faCar,
+  faUser,
+  faPhone,
+  faClock,
+  faCheckCircle,
+  faExclamationTriangle,
+  faTimesCircle
+} from '@fortawesome/free-solid-svg-icons'
 
 const mockData = [
   {
@@ -31,10 +43,10 @@ const mockData = [
 ]
 
 const statusColor = {
-  'ต่อภาษีแล้ว': 'bg-green-700 text-white',
-  'ใกล้ครบกำหนด': 'bg-yellow-600 text-white',
-  'เกินกำหนด': 'bg-red-700 text-white',
-  'รอดำเนินการ': 'bg-blue-700 text-white',
+  'ต่อภาษีแล้ว': 'bg-green-600 dark:bg-green-700 text-white',
+  'ใกล้ครบกำหนด': 'bg-yellow-500 dark:bg-yellow-600 text-black dark:text-white',
+  'เกินกำหนด': 'bg-red-600 dark:bg-red-700 text-white',
+  'รอดำเนินการ': 'bg-blue-600 dark:bg-blue-700 text-white',
 }
 
 const statusIcon = {
@@ -72,30 +84,30 @@ export default function CustomerInfoPage() {
   const years = ['2024', '2025', '2026']
 
   return (
-    <div className="flex min-h-screen flex-col items-center p-4 page-transition">
+    <div className="flex min-h-screen flex-col items-center p-4 bg-white dark:bg-neutral-900 page-transition">
       <div className="w-full max-w-4xl">
         <div className="flex items-center justify-center mb-4">
           <CustomerIcon className="w-6 h-6 mr-2" />
-          <h1 className="text-center text-2xl font-bold">ข้อมูลลูกค้า</h1>
+          <h1 className="text-center text-2xl font-bold text-neutral-800 dark:text-white">ข้อมูลลูกค้า</h1>
         </div>
 
         <div className="border-t border-gray-300 dark:border-gray-700 mb-6" />
 
-        <div className="bg-white/70 dark:bg-gray-800/70 rounded-md p-6 shadow-sm">
+        <div className="bg-white dark:bg-neutral-800 rounded-md p-6 shadow-sm">
           <div className="flex flex-wrap gap-4 mb-4 items-center">
             <div className="relative flex-1">
               <FontAwesomeIcon icon={faSearch} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white text-sm" />
               <input
                 type="text"
                 placeholder="ค้นหาทะเบียนรถ / ชื่อลูกค้า"
-                className="w-full pl-10 px-4 py-2 rounded-lg bg-neutral-800 text-white"
+                className="w-full pl-10 px-4 py-2 rounded-lg bg-neutral-700 text-white"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
             </div>
             <div className="relative">
               <FontAwesomeIcon icon={faCalendarDay} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white text-xs" />
-              <select className="pl-6 pr-2 py-2 rounded-lg bg-neutral-800 text-white" value={filterDay} onChange={e => setFilterDay(e.target.value)}>
+              <select className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white" value={filterDay} onChange={e => setFilterDay(e.target.value)}>
                 <option value="">วัน</option>
                 {days.map(day => (
                   <option key={day} value={day}>{day}</option>
@@ -104,7 +116,7 @@ export default function CustomerInfoPage() {
             </div>
             <div className="relative">
               <FontAwesomeIcon icon={faCalendarAlt} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white text-xs" />
-              <select className="pl-6 pr-2 py-2 rounded-lg bg-neutral-800 text-white" value={filterMonth} onChange={e => setFilterMonth(e.target.value)}>
+              <select className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white" value={filterMonth} onChange={e => setFilterMonth(e.target.value)}>
                 <option value="">เดือน</option>
                 {months.map(month => (
                   <option key={month} value={month}>{month}</option>
@@ -113,7 +125,7 @@ export default function CustomerInfoPage() {
             </div>
             <div className="relative">
               <FontAwesomeIcon icon={faCalendar} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white text-xs" />
-              <select className="pl-6 pr-2 py-2 rounded-lg bg-neutral-800 text-white" value={filterYear} onChange={e => setFilterYear(e.target.value)}>
+              <select className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white" value={filterYear} onChange={e => setFilterYear(e.target.value)}>
                 <option value="">ปี</option>
                 {years.map(year => (
                   <option key={year} value={year}>{year}</option>
@@ -129,7 +141,7 @@ export default function CustomerInfoPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-gray-800 dark:text-gray-100">
+            <table className="w-full text-left text-sm text-neutral-900 dark:text-gray-100">
               <thead>
                 <tr className="border-b border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400">
                   <th className="py-2"><FontAwesomeIcon icon={faCar} className="mr-2" />ทะเบียนรถ</th>
