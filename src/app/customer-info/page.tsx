@@ -57,9 +57,11 @@ export default function CustomerInfoPage() {
             ? dtField.split('T')[0]
             : dtField
 
-          // ฟอร์แมตเบอร์โทรให้มี 0 นำหน้า
-          const rawPhone = item['เบอร์ติดต่อ'] || ''
-          const phone = rawPhone.startsWith('0') ? rawPhone : `0${rawPhone}`
+          // ฟอร์แมตเบอร์โทรให้เป็น string และมี 0 นำหน้า
+          const rawPhone = (item['เบอร์ติดต่อ'] || '').toString()
+          const phone = rawPhone.startsWith('0')
+            ? rawPhone
+            : `0${rawPhone}`
 
           return {
             licensePlate: item['ทะเบียนรถ'] || '',
@@ -144,67 +146,43 @@ export default function CustomerInfoPage() {
                 onChange={e => setSearch(e.target.value)}
               />
             </div>
-            {/* Day */}
+            {/* Day Filter */}
             <div className="relative">
               <FontAwesomeIcon icon={faCalendarDay} className="absolute left-2 top-1/2 -translate-y-1/2 text-white text-xs" />
-              <select
-                className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white"
-                value={filterDay}
-                onChange={e => setFilterDay(e.target.value)}
-              >
+              <select value={filterDay} onChange={e => setFilterDay(e.target.value)} className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white">
                 <option value="">วัน</option>
-                {days.map(day => (
-                  <option key={day} value={day}>{day}</option>
-                ))}
+                {days.map(day => <option key={day}>{day}</option>)}
               </select>
             </div>
-            {/* Month */}
+            {/* Month Filter */}
             <div className="relative">
               <FontAwesomeIcon icon={faCalendarAlt} className="absolute left-2 top-1/2 -translate-y-1/2 text-white text-xs" />
-              <select
-                className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white"
-                value={filterMonth}
-                onChange={e => setFilterMonth(e.target.value)}
-              >
+              <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white">
                 <option value="">เดือน</option>
-                {months.map(month => (
-                  <option key={month} value={month}>{month}</option>
-                ))}
+                {months.map(month => <option key={month}>{month}</option>)}
               </select>
             </div>
-            {/* Year */}
+            {/* Year Filter */}
             <div className="relative">
               <FontAwesomeIcon icon={faCalendar} className="absolute left-2 top-1/2 -translate-y-1/2 text-white text-xs" />
-              <select
-                className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white"
-                value={filterYear}
-                onChange={e => setFilterYear(e.target.value)}
-              >
+              <select value={filterYear} onChange={e => setFilterYear(e.target.value)} className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white">
                 <option value="">ปี</option>
-                {years.map(year => (
-                  <option key={year} value={year}>{year}</option>
-                ))}
+                {years.map(year => <option key={year}>{year}</option>)}
               </select>
             </div>
             {/* Reset */}
-            <button
-              onClick={resetFilters}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
-            >
-              ล้างตัวกรอง
-            </button>
+            <button onClick={resetFilters} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg">ล้างตัวกรอง</button>
           </div>
-
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-neutral-900 dark:text-gray-100">
               <thead>
                 <tr className="border-b border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400">
-                  <th className="py-2"><FontAwesomeIcon icon={faCar} className="mr-2" />ทะเบียนรถ</th>
-                  <th className="py-2"><FontAwesomeIcon icon={faCalendarDay} className="mr-2" />วันที่</th>
-                  <th className="py-2"><FontAwesomeIcon icon={faUser} className="mr-2" />ลูกค้า</th>
-                  <th className="py-2"><FontAwesomeIcon icon={faPhone} className="mr-2" />เบอร์โทร</th>
-                  <th className="py-2"><FontAwesomeIcon icon={faClock} className="mr-2" />สถานะ</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faCar} className="mr-2"/>ทะเบียนรถ</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faCalendarDay} className="mr-2"/>วันที่</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faUser} className="mr-2"/>ลูกค้า</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faPhone} className="mr-2"/>เบอร์โทร</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faClock} className="mr-2"/>สถานะ</th>
                 </tr>
               </thead>
               <tbody>
@@ -214,24 +192,17 @@ export default function CustomerInfoPage() {
                     <td className="py-2">{item.registerDate}</td>
                     <td className="py-2">{item.customerName}</td>
                     <td className="py-2">{item.phone}</td>
-                    <td className="py-2">
-                      <span className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${statusColor[item.status]}`}>
-                        <FontAwesomeIcon icon={statusIcon[item.status]} /> {item.status}
-                      </span>
-                    </td>
+                    <td className="py-2"><span className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${statusColor[item.status]}`}><FontAwesomeIcon icon={statusIcon[item.status]}/> {item.status}</span></td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
-
-        {/* Back Button */}
+        {/* Back */}
         <div className="text-center mt-6">
           <Link href="/" className="nav-button inline-flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-left">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-left"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             กลับหน้าหลัก
           </Link>
         </div>
