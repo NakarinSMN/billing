@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { CustomerIcon } from '@/components/icons/customer-icon'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch, faCalendarDay, faCalendarAlt, faCalendar } from '@fortawesome/free-solid-svg-icons'
 
 const mockData = [
   {
@@ -41,6 +43,13 @@ export default function CustomerInfoPage() {
   const [filterMonth, setFilterMonth] = useState('')
   const [filterYear, setFilterYear] = useState('')
 
+  const resetFilters = () => {
+    setSearch('')
+    setFilterDay('')
+    setFilterMonth('')
+    setFilterYear('')
+  }
+
   const filteredData = mockData.filter(item => {
     const [day, month, year] = item.date.split(' ')
     const matchSearch =
@@ -66,32 +75,50 @@ export default function CustomerInfoPage() {
         <div className="border-t border-gray-300 dark:border-gray-700 mb-6" />
 
         <div className="bg-white/70 dark:bg-gray-800/70 rounded-md p-6 shadow-sm">
-          <div className="flex flex-wrap gap-4 mb-4">
-            <input
-              type="text"
-              placeholder="ค้นหาทะเบียนรถ / ชื่อลูกค้า"
-              className="flex-1 px-4 py-2 rounded-lg bg-neutral-800 text-white"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-            <select className="rounded-lg px-3 py-2 bg-neutral-800 text-white" value={filterDay} onChange={e => setFilterDay(e.target.value)}>
-              <option value="">วัน</option>
-              {days.map(day => (
-                <option key={day} value={day}>{day}</option>
-              ))}
-            </select>
-            <select className="rounded-lg px-3 py-2 bg-neutral-800 text-white" value={filterMonth} onChange={e => setFilterMonth(e.target.value)}>
-              <option value="">เดือน</option>
-              {months.map(month => (
-                <option key={month} value={month}>{month}</option>
-              ))}
-            </select>
-            <select className="rounded-lg px-3 py-2 bg-neutral-800 text-white" value={filterYear} onChange={e => setFilterYear(e.target.value)}>
-              <option value="">ปี</option>
-              {years.map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
+          <div className="flex flex-wrap gap-4 mb-4 items-center">
+            <div className="relative flex-1">
+              <FontAwesomeIcon icon={faSearch} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white text-sm" />
+              <input
+                type="text"
+                placeholder="ค้นหาทะเบียนรถ / ชื่อลูกค้า"
+                className="w-full pl-10 px-4 py-2 rounded-lg bg-neutral-800 text-white"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+            <div className="relative">
+              <FontAwesomeIcon icon={faCalendarDay} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white text-xs" />
+              <select className="pl-6 pr-2 py-2 rounded-lg bg-neutral-800 text-white" value={filterDay} onChange={e => setFilterDay(e.target.value)}>
+                <option value="">วัน</option>
+                {days.map(day => (
+                  <option key={day} value={day}>{day}</option>
+                ))}
+              </select>
+            </div>
+            <div className="relative">
+              <FontAwesomeIcon icon={faCalendarAlt} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white text-xs" />
+              <select className="pl-6 pr-2 py-2 rounded-lg bg-neutral-800 text-white" value={filterMonth} onChange={e => setFilterMonth(e.target.value)}>
+                <option value="">เดือน</option>
+                {months.map(month => (
+                  <option key={month} value={month}>{month}</option>
+                ))}
+              </select>
+            </div>
+            <div className="relative">
+              <FontAwesomeIcon icon={faCalendar} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white text-xs" />
+              <select className="pl-6 pr-2 py-2 rounded-lg bg-neutral-800 text-white" value={filterYear} onChange={e => setFilterYear(e.target.value)}>
+                <option value="">ปี</option>
+                {years.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+            </div>
+            <button
+              onClick={resetFilters}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg"
+            >
+              ล้างตัวกรอง
+            </button>
           </div>
 
           <div className="overflow-x-auto">
