@@ -39,7 +39,6 @@ export default function CustomerInfoPage() {
   const [filterYear, setFilterYear] = useState('')
   const [data, setData] = useState([])
 
-
   useEffect(() => {
     async function fetchData() {
       try {
@@ -62,11 +61,12 @@ export default function CustomerInfoPage() {
   }
 
   const filteredData = data.filter(item => {
+    if (!item.registerDate) return false
     const [year, monthRaw, dayRaw] = item.registerDate.split('-')
     const day = String(Number(dayRaw)).padStart(1, '0')
     const monthMap = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
     const month = monthMap[Number(monthRaw) - 1]
-    const matchSearch = item.licensePlate.includes(search) || item.customerName.includes(search)
+    const matchSearch = (item.licensePlate || '').includes(search) || (item.customerName || '').includes(search)
     const matchDay = !filterDay || day === filterDay
     const matchMonth = !filterMonth || month === filterMonth
     const matchYear = !filterYear || year === filterYear
