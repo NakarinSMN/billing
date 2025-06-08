@@ -20,6 +20,7 @@ import {
 
 const statusColor = {
   'ต่อภาษีแล้ว': 'bg-green-600 dark:bg-green-700 text-white',
+  'กำลังจะครบกำหนด': 'bg-yellow-500 dark:bg-yellow-600 text-black dark:text-white',
   'ใกล้ครบกำหนด': 'bg-yellow-500 dark:bg-yellow-600 text-black dark:text-white',
   'เกินกำหนด': 'bg-red-600 dark:bg-red-700 text-white',
   'รอดำเนินการ': 'bg-blue-600 dark:bg-blue-700 text-white',
@@ -27,6 +28,7 @@ const statusColor = {
 
 const statusIcon = {
   'ต่อภาษีแล้ว': faCheckCircle,
+  'กำลังจะครบกำหนด': faExclamationTriangle,
   'ใกล้ครบกำหนด': faExclamationTriangle,
   'เกินกำหนด': faTimesCircle,
   'รอดำเนินการ': faClock,
@@ -52,10 +54,13 @@ export default function CustomerInfoPage() {
           // ดึงฟิลด์เวลาที่ลงทะเบียน
           const dtField = item['เวลาที่ลงทะเบียน'] || ''
           const rawDate = dtField.includes('T') ? dtField.split('T')[0] : dtField
+          // ฟอร์แมตเบอร์โทรให้มี 0 นำหน้า
+          const rawPhone = item['เบอร์ติดต่อ'] || ''
+          const phone = rawPhone.startsWith('0') ? rawPhone : `0${rawPhone}`
           return {
             licensePlate: item['ทะเบียนรถ'] || '',
             customerName: item['ชื่อลูกค้า'] || '',
-            phone: item['เบอร์ติดต่อ'] || '',
+            phone,
             registerDate: rawDate,
             status: item['สถานะ'] || item['สถานะการเตือน'] || 'รอดำเนินการ',
           }
@@ -135,97 +140,4 @@ export default function CustomerInfoPage() {
             <div className="relative">
               <FontAwesomeIcon
                 icon={faCalendarDay}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white text-xs"
-              />
-              <select
-                className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white"
-                value={filterDay}
-                onChange={e => setFilterDay(e.target.value)}
-              >
-                <option value="">วัน</option>
-                {days.map(day => (
-                  <option key={day} value={day}>
-                    {day}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="relative">
-              <FontAwesomeIcon
-                icon={faCalendarAlt}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white text-xs"
-              />
-              <select
-                className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white"
-                value={filterMonth}
-                onChange={e => setFilterMonth(e.target.value)}
-              >
-                <option value="">เดือน</option>
-                {months.map(month => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="relative">
-              <FontAwesomeIcon
-                icon={faCalendar}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white text-xs"
-              />
-              <select
-                className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white"
-                value={filterYear}
-                onChange={e => setFilterYear(e.target.value)}
-              >
-                <option value="">ปี</option>
-                {years.map(year => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <button
-              onClick={resetFilters}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg"
-            >
-              ล้างตัวกรอง
-            </button>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-neutral-900 dark:text-gray-100">
-              <thead>
-                <tr className="border-b border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400">
-                  <th className="py-2"><FontAwesomeIcon icon={faCar} className="mr-2" />ทะเบียนรถ</th>
-                  <th className="py-2"><FontAwesomeIcon icon={faCalendarDay} className="mr-2" />วันที่</th>
-                  <th className="py-2"><FontAwesomeIcon icon={faUser} className="mr-2" />ลูกค้า</th>
-                  <th className="py-2"><FontAwesomeIcon icon={faPhone} className="mr-2" />เบอร์โทร</th>
-                  <th className="py-2"><FontAwesomeIcon icon={faClock} className="mr-2" />สถานะ</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredData.map((item, i) => (
-                  <tr key={i} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
-                    <td className="py-2">{item.licensePlate}</td>
-                    <td className="py-2">{item.registerDate}</td>
-                    <td className="py-2">{item.customerName}</td>
-                    <td className="py-2">{item.phone}</td>
-                    <td className="py-2"><span className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${statusColor[item.status]}`}><FontAwesomeIcon icon={statusIcon[item.status]} /> {item.status}</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="text-center mt-6">
-          <Link href="/" className="nav-button inline-flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-left"><path d="M19 12H5M12 19l-7-7 7-7" /></svg> กลับหน้าหลัก
-          </Link>
-        </div>
-      </div>
-    </div>
-  )
-}
+                className="absolute left-2 top-1/2 transform -translate-y-
