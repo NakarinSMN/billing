@@ -46,14 +46,14 @@ export default function CustomerInfoPage() {
         const json = await res.json();
         console.log("📦 ได้ข้อมูลจาก Google Sheet:", json);
 
-        // ✅ แปลงข้อมูลให้อยู่ในฟอร์แมตที่ UI ใช้ได้
         const formatted = (json.data || []).map((item) => {
-          const rawDate = (item["วันที่จดทะเบียน"] || '').split("T")[0]; // yyyy-mm-dd
+          const dateTime = item["วันที่จดทะเบียน"] || ''
+          const rawDate = dateTime.includes('T') ? dateTime.split('T')[0] : dateTime
           return {
             licensePlate: item["ทะเบียนรถ"] || "",
             customerName: item["ชื่อลูกค้า"] || "",
             phone: item["เบอร์ติดต่อ"] || "",
-            registerDate: rawDate || "",
+            registerDate: rawDate,
             status: item["สถานะ"] || "รอดำเนินการ",
           }
         });
@@ -66,7 +66,6 @@ export default function CustomerInfoPage() {
     fetchData();
   }, [])
 
-
   const resetFilters = () => {
     setSearch('')
     setFilterDay('')
@@ -77,11 +76,11 @@ export default function CustomerInfoPage() {
   const filteredData = data.filter(item => {
     if (!item.registerDate) return false
     const [year, monthRaw, dayRaw] = item.registerDate.split('-')
-    const day = String(Number(dayRaw)).padStart(1, '0')
+    const day = String(Number(dayRaw)).padStart(2, '0')
     const monthMap = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
     const month = monthMap[Number(monthRaw) - 1]
     const matchSearch = (item.licensePlate || '').includes(search) || (item.customerName || '').includes(search)
-    const matchDay = !filterDay || day === filterDay
+    const matchDay = !filterDay || day === filterDay.padStart(2, '0')
     const matchMonth = !filterMonth || month === filterMonth
     const matchYear = !filterYear || year === filterYear
     return matchSearch && matchDay && matchMonth && matchYear
