@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { CustomerIcon } from '@/components/icons/customer-icon'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faCalendarDay, faCalendarAlt, faCalendar } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faCalendarDay, faCalendarAlt, faCalendar, faCar, faUser, faPhone, faClock, faCheckCircle, faExclamationTriangle, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 
 const mockData = [
   {
@@ -35,6 +35,13 @@ const statusColor = {
   'ใกล้ครบกำหนด': 'bg-yellow-600 text-white',
   'เกินกำหนด': 'bg-red-700 text-white',
   'รอดำเนินการ': 'bg-blue-700 text-white',
+}
+
+const statusIcon = {
+  'ต่อภาษีแล้ว': faCheckCircle,
+  'ใกล้ครบกำหนด': faExclamationTriangle,
+  'เกินกำหนด': faTimesCircle,
+  'รอดำเนินการ': faClock,
 }
 
 export default function CustomerInfoPage() {
@@ -125,11 +132,11 @@ export default function CustomerInfoPage() {
             <table className="w-full text-left text-sm text-gray-800 dark:text-gray-100">
               <thead>
                 <tr className="border-b border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400">
-                  <th className="py-2">ทะเบียนรถ</th>
-                  <th className="py-2">วันที่</th>
-                  <th className="py-2">ลูกค้า</th>
-                  <th className="py-2">เบอร์โทร</th>
-                  <th className="py-2">สถานะ</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faCar} className="mr-2" />ทะเบียนรถ</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faCalendarDay} className="mr-2" />วันที่</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faUser} className="mr-2" />ลูกค้า</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faPhone} className="mr-2" />เบอร์โทร</th>
+                  <th className="py-2"><FontAwesomeIcon icon={faClock} className="mr-2" />สถานะ</th>
                 </tr>
               </thead>
               <tbody>
@@ -140,8 +147,8 @@ export default function CustomerInfoPage() {
                     <td className="py-2">{item.customer}</td>
                     <td className="py-2">{item.service}</td>
                     <td className="py-2">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColor[item.status]}`}>
-                        {item.status}
+                      <span className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${statusColor[item.status]}`}>
+                        <FontAwesomeIcon icon={statusIcon[item.status]} /> {item.status}
                       </span>
                     </td>
                   </tr>
