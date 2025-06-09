@@ -28,13 +28,13 @@ export default function PricingPage() {
   const [loading, setLoading] = useState(true);
   const addRowRefs = useRef<HTMLTableRowElement[]>([]);
 
-  const SHEET_POST_URL = "https://script.google.com/macros/s/AKfycbz3WJmHNJ2h8Yj1rm2tc_mXj6JNCYz8T-yOmg9kC6aKgpAAuXmH5Z3DNZQF8ecGZUGw/exec";
+  const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbz3WJmHNJ2h8Yj1rm2tc_mXj6JNCYz8T-yOmg9kC6aKgpAAuXmH5Z3DNZQF8ecGZUGw/exec";
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        const res = await fetch(SHEET_POST_URL);
+        const res = await fetch(SHEET_API_URL);
         const data = await res.json();
         const normalized = data.map((item: any) => ({
           name: item["บริการ"] ?? '',
@@ -53,44 +53,28 @@ export default function PricingPage() {
     fetchServices();
   }, []);
 
-  useEffect(() => {
-    if (addRowRefs.current.length > 0 && editIndex === null) {
-      const last = addRowRefs.current[addRowRefs.current.length - 1];
-      last?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [services, editIndex]);
-
-  const filteredServices = searchOpen
-    ? services.filter((s) =>
-        s.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : services;
-
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 2500);
-  };
-
-  const handleEdit = (index: number) => {
-    setEditIndex(index);
-    setEditRow(services[index]);
-    setModalOpen(true);
-  };
-
-  const handleAdd = () => {
-    setEditIndex(null);
-    setEditRow({ name: "", carPrice: "", motorcyclePrice: "" });
-    setModalOpen(true);
-  };
-
-  const handleDelete = (index: number) => {
+  const handleDelete = async (index: number) => {
     setConfirmBox({
       message: "คุณต้องการลบรายการนี้หรือไม่?",
-      onConfirm: () => {
-        const updated = [...services];
-        updated.splice(index, 1);
-        setServices(updated);
-        showToast("ลบรายการแล้ว");
+      onConfirm: async () => {
+        try {
+          const res = await fetch(SHEET_API_URL, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ index })
+          });
+          const result = await res.json();
+          if (result.result === "success") {
+            const updated = [...services];
+            updated.splice(index, 1);
+            setServices(updated);
+            showToast("ลบรายการสำเร็จ");
+          } else {
+            showToast("เกิดข้อผิดพลาดขณะลบข้อมูล");
+          }
+        } catch (err) {
+          showToast("ลบข้อมูลไม่สำเร็จ");
+        }
         setConfirmBox(null);
       }
     });
@@ -100,30 +84,27 @@ export default function PricingPage() {
     if (!editRow) return;
     const updated = [...services];
 
-    // ถ้าเป็นรายการใหม่ ให้ POST เข้า Google Sheet
     if (editIndex === null) {
       try {
-        const res = await fetch(SHEET_POST_URL, {
+        const res = await fetch(SHEET_API_URL, {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: editRow.name,
             carPrice: editRow.carPrice,
             motorcyclePrice: editRow.motorcyclePrice
-          }),
-          headers: {
-            "Content-Type": "application/json"
-          }
+          })
         });
-        const json = await res.json();
-        if (json.result === "success") {
-          updated.push(editRow as Service);
+        const result = await res.json();
+        if (result.result === "success") {
+          updated.push(editRow);
           setServices(updated);
           showToast("เพิ่มรายการใหม่สำเร็จ");
         } else {
           showToast("เกิดข้อผิดพลาดขณะเพิ่มข้อมูล");
         }
-      } catch (error) {
-        showToast("การส่งข้อมูลล้มเหลว");
+      } catch (err) {
+        showToast("เพิ่มข้อมูลไม่สำเร็จ");
       }
     } else {
       updated[editIndex] = editRow;
@@ -135,7 +116,6 @@ export default function PricingPage() {
     setEditIndex(null);
     setEditRow(null);
   };
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 transition-colors">
       {/* Toast */}
