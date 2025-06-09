@@ -26,6 +26,7 @@ export default function PricingPage() {
   const [editRow, setEditRow] = useState<{ name: string; carPrice: string; motorcyclePrice: string } | null>(null);
   const [services, setServices] = useState<Service[]>([]);
   const addRowRefs = useRef<HTMLTableRowElement[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // ✅ ดึงข้อมูลจาก Google Sheets ผ่าน Apps Script
@@ -174,33 +175,33 @@ export default function PricingPage() {
               กำลังโหลดข้อมูล...
             </div>
           ) : (
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="sticky top-0 z-10 bg-gray-100 dark:bg-gray-700">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">บริการ</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">รถยนต์ (บาท)</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">รถจักรยานยนต์ (บาท)</th>
-                <th className="px-6 py-3"></th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-              {filteredServices.map((service, idx) => (
-                <tr key={idx} ref={el => addRowRefs.current[idx] = el!} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{service.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">{service.carPrice}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">{service.motorcyclePrice}</td>
-                  <td className="px-6 py-4 text-right space-x-2">
-                    <button onClick={() => handleEdit(idx)} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300" title="แก้ไข">
-                      <FontAwesomeIcon icon={faEdit} />
-                    </button>
-                    <button onClick={() => handleDelete(idx)} className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300" title="ลบ">
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                  </td>
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="sticky top-0 z-10 bg-gray-100 dark:bg-gray-700">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">บริการ</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">รถยนต์ (บาท)</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">รถจักรยานยนต์ (บาท)</th>
+                  <th className="px-6 py-3"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                {filteredServices.map((service, idx) => (
+                  <tr key={idx} ref={el => addRowRefs.current[idx] = el!} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{service.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">{service.carPrice}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">{service.motorcyclePrice}</td>
+                    <td className="px-6 py-4 text-right space-x-2">
+                      <button onClick={() => handleEdit(idx)} className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300" title="แก้ไข">
+                        <FontAwesomeIcon icon={faEdit} />
+                      </button>
+                      <button onClick={() => handleDelete(idx)} className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300" title="ลบ">
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </div>
 
