@@ -53,6 +53,30 @@ export default function PricingPage() {
     fetchServices();
   }, []);
 
+  useEffect(() => {
+    if (addRowRefs.current.length > 0 && editIndex === null) {
+      const last = addRowRefs.current[addRowRefs.current.length - 1];
+      last?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [services, editIndex]);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2500);
+  };
+
+  const handleEdit = (index: number) => {
+    setEditIndex(index);
+    setEditRow(services[index]);
+    setModalOpen(true);
+  };
+
+  const handleAdd = () => {
+    setEditIndex(null);
+    setEditRow({ name: "", carPrice: "", motorcyclePrice: "" });
+    setModalOpen(true);
+  };
+
   const handleDelete = async (index: number) => {
     setConfirmBox({
       message: "คุณต้องการลบรายการนี้หรือไม่?",
@@ -137,6 +161,10 @@ export default function PricingPage() {
     setEditIndex(null);
     setEditRow(null);
   };
+
+  const filteredServices = searchOpen
+    ? services.filter((s) => s.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    : services;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 transition-colors">
