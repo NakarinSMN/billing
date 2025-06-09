@@ -59,9 +59,9 @@ export default function PricingPage() {
       onConfirm: async () => {
         try {
           const res = await fetch(SHEET_API_URL, {
-            method: "DELETE",
+            method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ index })
+            body: JSON.stringify({ method: "delete", index })
           });
           const result = await res.json();
           if (result.result === "success") {
@@ -90,6 +90,7 @@ export default function PricingPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            method: "add",
             name: editRow.name,
             carPrice: editRow.carPrice,
             motorcyclePrice: editRow.motorcyclePrice
@@ -107,15 +108,36 @@ export default function PricingPage() {
         showToast("เพิ่มข้อมูลไม่สำเร็จ");
       }
     } else {
-      updated[editIndex] = editRow;
-      setServices(updated);
-      showToast("แก้ไขข้อมูลเรียบร้อย");
+      try {
+        const res = await fetch(SHEET_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            method: "update",
+            index: editIndex,
+            name: editRow.name,
+            carPrice: editRow.carPrice,
+            motorcyclePrice: editRow.motorcyclePrice
+          })
+        });
+        const result = await res.json();
+        if (result.result === "success") {
+          updated[editIndex] = editRow;
+          setServices(updated);
+          showToast("แก้ไขข้อมูลเรียบร้อย");
+        } else {
+          showToast("เกิดข้อผิดพลาดขณะบันทึก");
+        }
+      } catch (err) {
+        showToast("บันทึกข้อมูลไม่สำเร็จ");
+      }
     }
 
     setModalOpen(false);
     setEditIndex(null);
     setEditRow(null);
   };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 transition-colors">
       {/* Toast */}
