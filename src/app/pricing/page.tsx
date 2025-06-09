@@ -35,6 +35,7 @@ export default function PricingPage() {
       try {
         const res = await fetch("https://script.google.com/macros/s/AKfycbz3WJmHNJ2h8Yj1rm2tc_mXj6JNCYz8T-yOmg9kC6aKgpAAuXmH5Z3DNZQF8ecGZUGw/exec");
         const data = await res.json();
+        console.log("✅ raw data from Google Sheets:", data); // 👈 เพิ่มบรรทัดนี้
         const normalized = data.map((item: any) => ({
           name: item.name ?? '',
           carPrice: item.carPrice ?? '',
