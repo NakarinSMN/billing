@@ -15,7 +15,9 @@ import {
   faClock,
   faCheckCircle,
   faExclamationTriangle,
-  faTimesCircle
+  faTimesCircle,
+  faChevronLeft,
+  faChevronRight
 } from '@fortawesome/free-solid-svg-icons'
 
 const statusColor = {
@@ -40,6 +42,8 @@ export default function CustomerInfoPage() {
   const [filterMonth, setFilterMonth] = useState('')
   const [filterYear, setFilterYear] = useState('')
   const [data, setData] = useState([])
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     async function fetchData() {
@@ -48,21 +52,11 @@ export default function CustomerInfoPage() {
           'https://script.google.com/macros/s/AKfycbxN9rG3NhDyhlXVKgNndNcJ6kHopPaf5GRma_dRYjtP64svMYUFCSALwTEX4mYCHoDd6g/exec?getAll=1'
         )
         const json = await res.json()
-        console.log('📦 ได้ข้อมูลจาก Google Sheet:', json)
-
         const formatted = (json.data || []).map(item => {
-          // ใช้คอลัมน์ 'วันที่ชำระภาษีล่าสุด' เป็นวันที่
           const dtField = item['วันที่ชำระภาษีล่าสุด'] || ''
-          const registerDate = dtField.includes('T')
-            ? dtField.split('T')[0]
-            : dtField
-
-          // ฟอร์แมตเบอร์โทรให้เป็น string และมี 0 นำหน้า
+          const registerDate = dtField.includes('T') ? dtField.split('T')[0] : dtField
           const rawPhone = (item['เบอร์ติดต่อ'] || '').toString()
-          const phone = rawPhone.startsWith('0')
-            ? rawPhone
-            : `0${rawPhone}`
-
+          const phone = rawPhone.startsWith('0') ? rawPhone : `0${rawPhone}`
           return {
             licensePlate: item['ทะเบียนรถ'] || '',
             customerName: item['ชื่อลูกค้า'] || '',
@@ -71,8 +65,6 @@ export default function CustomerInfoPage() {
             status: item['สถานะ'] || item['สถานะการเตือน'] || 'รอดำเนินการ',
           }
         })
-
-        console.log('🗃 Formatted data:', formatted)
         setData(formatted)
       } catch (err) {
         console.error('❌ ดึงข้อมูลไม่สำเร็จ:', err)
@@ -86,6 +78,7 @@ export default function CustomerInfoPage() {
     setFilterDay('')
     setFilterMonth('')
     setFilterYear('')
+    setCurrentPage(1)
   }
 
   const filteredData = data
@@ -93,49 +86,34 @@ export default function CustomerInfoPage() {
     .filter(item => {
       const [year, monthRaw, dayRaw] = item.registerDate.split('-')
       const day = String(Number(dayRaw)).padStart(2, '0')
-      const monthMap = [
-        'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
-        'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.',
-      ]
+      const monthMap = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
       const month = monthMap[Number(monthRaw) - 1] || ''
-
-      const matchSearch =
-        item.licensePlate.includes(search) ||
-        item.customerName.includes(search)
+      const matchSearch = item.licensePlate.includes(search) || item.customerName.includes(search)
       const matchDay = !filterDay || day === filterDay.padStart(2, '0')
       const matchMonth = !filterMonth || month === filterMonth
       const matchYear = !filterYear || year === filterYear
       return matchSearch && matchDay && matchMonth && matchYear
     })
 
-  useEffect(() => {
-    console.log('📊 Filtered data:', filteredData)
-  }, [filteredData])
+  const startIdx = (currentPage - 1) * itemsPerPage
+  const paginatedData = filteredData.slice(startIdx, startIdx + itemsPerPage)
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage)
 
   const days = Array.from({ length: 31 }, (_, i) => `${i + 1}`)
-  const months = [
-    'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
-    'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.',
-  ]
+  const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
   const years = ['2024', '2025', '2026']
 
   return (
     <div className="flex min-h-screen flex-col items-center p-4 bg-white dark:bg-neutral-900 page-transition">
       <div className="w-full max-w-4xl">
-        {/* Header */}
         <div className="flex items-center justify-center mb-4">
           <CustomerIcon className="w-6 h-6 mr-2" />
-          <h1 className="text-2xl font-bold text-neutral-800 dark:text-white">
-            ข้อมูลลูกค้า
-          </h1>
+          <h1 className="text-2xl font-bold text-neutral-800 dark:text-white">ข้อมูลลูกค้า</h1>
         </div>
-
         <div className="border-t border-gray-300 dark:border-gray-700 mb-6" />
 
-        {/* Controls */}
         <div className="bg-white dark:bg-neutral-800 rounded-md p-6 shadow-sm">
           <div className="flex flex-wrap gap-4 mb-4 items-center">
-            {/* Search */}
             <div className="relative flex-1">
               <FontAwesomeIcon icon={faSearch} className="absolute left-3 top-1/2 -translate-y-1/2 text-white text-sm" />
               <input
@@ -146,7 +124,6 @@ export default function CustomerInfoPage() {
                 onChange={e => setSearch(e.target.value)}
               />
             </div>
-            {/* Day Filter */}
             <div className="relative">
               <FontAwesomeIcon icon={faCalendarDay} className="absolute left-2 top-1/2 -translate-y-1/2 text-white text-xs" />
               <select value={filterDay} onChange={e => setFilterDay(e.target.value)} className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white">
@@ -154,7 +131,6 @@ export default function CustomerInfoPage() {
                 {days.map(day => <option key={day}>{day}</option>)}
               </select>
             </div>
-            {/* Month Filter */}
             <div className="relative">
               <FontAwesomeIcon icon={faCalendarAlt} className="absolute left-2 top-1/2 -translate-y-1/2 text-white text-xs" />
               <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white">
@@ -162,7 +138,6 @@ export default function CustomerInfoPage() {
                 {months.map(month => <option key={month}>{month}</option>)}
               </select>
             </div>
-            {/* Year Filter */}
             <div className="relative">
               <FontAwesomeIcon icon={faCalendar} className="absolute left-2 top-1/2 -translate-y-1/2 text-white text-xs" />
               <select value={filterYear} onChange={e => setFilterYear(e.target.value)} className="pl-6 pr-2 py-2 rounded-lg bg-neutral-700 text-white">
@@ -170,10 +145,23 @@ export default function CustomerInfoPage() {
                 {years.map(year => <option key={year}>{year}</option>)}
               </select>
             </div>
-            {/* Reset */}
+            <div>
+              <select
+                className="py-2 px-3 rounded-lg bg-neutral-700 text-white"
+                value={itemsPerPage}
+                onChange={e => {
+                  setItemsPerPage(Number(e.target.value))
+                  setCurrentPage(1)
+                }}
+              >
+                {[10, 20, 30, 40, 50].map(n => (
+                  <option key={n} value={n}>{n} รายการ</option>
+                ))}
+              </select>
+            </div>
             <button onClick={resetFilters} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg">ล้างตัวกรอง</button>
           </div>
-          {/* Table */}
+
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-neutral-900 dark:text-gray-100">
               <thead>
@@ -186,23 +174,48 @@ export default function CustomerInfoPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredData.map((item, idx) => (
+                {paginatedData.map((item, idx) => (
                   <tr key={idx} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
                     <td className="py-2">{item.licensePlate}</td>
                     <td className="py-2">{item.registerDate}</td>
                     <td className="py-2">{item.customerName}</td>
                     <td className="py-2">{item.phone}</td>
-                    <td className="py-2"><span className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${statusColor[item.status]}`}><FontAwesomeIcon icon={statusIcon[item.status]}/> {item.status}</span></td>
+                    <td className="py-2">
+                      <span className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${statusColor[item.status]}`}>
+                        <FontAwesomeIcon icon={statusIcon[item.status]} /> {item.status}
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+
+          {/* Pagination Controls */}
+          <div className="flex justify-center mt-4 gap-2">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 rounded bg-gray-700 text-white disabled:opacity-40"
+            >
+              <FontAwesomeIcon icon={faChevronLeft} />
+            </button>
+            <span className="text-white px-2">{currentPage} / {totalPages || 1}</span>
+            <button
+              onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 rounded bg-gray-700 text-white disabled:opacity-40"
+            >
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+          </div>
         </div>
-        {/* Back */}
+
         <div className="text-center mt-6">
           <Link href="/" className="nav-button inline-flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-left"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-left">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
             กลับหน้าหลัก
           </Link>
         </div>
