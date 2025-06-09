@@ -33,15 +33,16 @@ export default function PricingPage() {
       try {
         const res = await fetch("https://script.google.com/macros/s/AKfycbz3WJmHNJ2h8Yj1rm2tc_mXj6JNCYz8T-yOmg9kC6aKgpAAuXmH5Z3DNZQF8ecGZUGw/exec");
         const data = await res.json();
-        const normalized: Service[] = data.map((item: any) => ({
+        const normalized = data.map((item: any) => ({
           name: item.name ?? '',
           carPrice: item.carPrice ?? '',
           motorcyclePrice: item.motorcyclePrice ?? ''
         }));
         setServices(normalized);
       } catch (error) {
-        console.error("ไม่สามารถโหลดข้อมูล:", error);
-        showToast("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+        showToast("โหลดข้อมูลไม่สำเร็จ");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -167,6 +168,12 @@ export default function PricingPage() {
 
         {/* Table */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-auto max-h-[650px]">
+          {loading ? (
+            <div className="text-center text-gray-500 dark:text-gray-300 mt-10 animate-pulse">
+              <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
+              กำลังโหลดข้อมูล...
+            </div>
+          ) : (
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="sticky top-0 z-10 bg-gray-100 dark:bg-gray-700">
               <tr>
@@ -194,6 +201,7 @@ export default function PricingPage() {
               ))}
             </tbody>
           </table>
+          )}
         </div>
 
         {/* Modal Add/Edit */}
