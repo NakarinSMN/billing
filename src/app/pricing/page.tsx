@@ -13,8 +13,9 @@ const FontAwesomeIcon = dynamic(
 
 import {
   faPlus, faSearch, faEdit, faTrash, faTimes,
-  faCircleCheck, faCircleXmark, faSave
+  faCircleCheck, faCircleXmark, faSave, faSpinner
 } from "@fortawesome/free-solid-svg-icons";
+
 
 export default function PricingPage() {
   const [searchOpen, setSearchOpen] = useState(false);
