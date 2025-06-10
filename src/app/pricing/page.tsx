@@ -28,13 +28,17 @@ export default function PricingPage() {
   const [loading, setLoading] = useState(true);
   const addRowRefs = useRef<HTMLTableRowElement[]>([]);
 
-  const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbz3WJmHNJ2h8Yj1rm2tc_mXj6JNCYz8T-yOmg9kC6aKgpAAuXmH5Z3DNZQF8ecGZUGw/exec";
+  const SHEET_PROXY_URL = "/api/gs-proxy";
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        const res = await fetch(SHEET_API_URL);
+        const res = await fetch(SHEET_PROXY_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ method: "get" })
+        });
         const data = await res.json();
         const normalized = data.map((item: any) => ({
           name: item["บริการ"] ?? '',
@@ -82,7 +86,7 @@ export default function PricingPage() {
       message: "คุณต้องการลบรายการนี้หรือไม่?",
       onConfirm: async () => {
         try {
-          const res = await fetch(SHEET_API_URL, {
+          const res = await fetch(SHEET_PROXY_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ method: "delete", index })
@@ -108,53 +112,34 @@ export default function PricingPage() {
     if (!editRow) return;
     const updated = [...services];
 
-    if (editIndex === null) {
-      try {
-        const res = await fetch(SHEET_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            method: "add",
-            name: editRow.name,
-            carPrice: editRow.carPrice,
-            motorcyclePrice: editRow.motorcyclePrice
-          })
-        });
-        const result = await res.json();
-        if (result.result === "success") {
+    const payload = {
+      method: editIndex === null ? "add" : "update",
+      index: editIndex,
+      name: editRow.name,
+      carPrice: editRow.carPrice,
+      motorcyclePrice: editRow.motorcyclePrice
+    };
+
+    try {
+      const res = await fetch(SHEET_PROXY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const result = await res.json();
+      if (result.result === "success") {
+        if (editIndex === null) {
           updated.push(editRow);
-          setServices(updated);
-          showToast("เพิ่มรายการใหม่สำเร็จ");
         } else {
-          showToast("เกิดข้อผิดพลาดขณะเพิ่มข้อมูล");
-        }
-      } catch (err) {
-        showToast("เพิ่มข้อมูลไม่สำเร็จ");
-      }
-    } else {
-      try {
-        const res = await fetch(SHEET_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            method: "update",
-            index: editIndex,
-            name: editRow.name,
-            carPrice: editRow.carPrice,
-            motorcyclePrice: editRow.motorcyclePrice
-          })
-        });
-        const result = await res.json();
-        if (result.result === "success") {
           updated[editIndex] = editRow;
-          setServices(updated);
-          showToast("แก้ไขข้อมูลเรียบร้อย");
-        } else {
-          showToast("เกิดข้อผิดพลาดขณะบันทึก");
         }
-      } catch (err) {
-        showToast("บันทึกข้อมูลไม่สำเร็จ");
+        setServices(updated);
+        showToast(editIndex === null ? "เพิ่มรายการใหม่สำเร็จ" : "แก้ไขข้อมูลเรียบร้อย");
+      } else {
+        showToast("เกิดข้อผิดพลาดขณะบันทึกข้อมูล");
       }
+    } catch (err) {
+      showToast("บันทึกข้อมูลไม่สำเร็จ");
     }
 
     setModalOpen(false);
@@ -166,6 +151,7 @@ export default function PricingPage() {
     ? services.filter((s) => s.name.toLowerCase().includes(searchTerm.toLowerCase()))
     : services;
 
+  // The rest of the UI remains unchanged
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 transition-colors">
       {/* Toast */}
