@@ -28,7 +28,8 @@ export default function PricingPage() {
   const [loading, setLoading] = useState(true);
   const addRowRefs = useRef<HTMLTableRowElement[]>([]);
 
-  const SHEET_PROXY_URL = "@api/gs-proxy";
+  const SHEET_PROXY_URL = "/api/gs-proxy"; // ✅ อย่าใส่ /app
+
 
   useEffect(() => {
     const fetchServices = async () => {
