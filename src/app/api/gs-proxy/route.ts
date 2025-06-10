@@ -1,17 +1,33 @@
-// /app/api/gs-proxy/route.ts
+// ✅ src/app/api/gs-proxy/route.ts
 export async function POST(req: Request) {
     const body = await req.json();
-    const gsUrl = "https://script.google.com/macros/s/AKfycbz3WJmHNJ2h8Yj1rm2tc_mXj6JNCYz8t-vOmg9kC6aKgpAAuXmH5Z3DNZQF8ecGZUGw/exec";
+    const gsUrl = "https://script.google.com/macros/s/AKfycbz3WJmHNJ2h8Yj1rm2tc_mXj6JNCYz8T-yOmg9kC6aKgpAAuXmH5Z3DNZQF8ecGZUGw/exec";
   
-    const res = await fetch(gsUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+    try {
+      const res = await fetch(gsUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
   
-    const data = await res.json();
-    return new Response(JSON.stringify(data), {
-      headers: { "Content-Type": "application/json" },
-    });
+      const text = await res.text();
+      try {
+        const json = JSON.parse(text);
+        return new Response(JSON.stringify(json), {
+          headers: { "Content-Type": "application/json" }
+        });
+      } catch {
+        return new Response(JSON.stringify({ error: "Response is not JSON", raw: text }), {
+          status: 500,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+  
+    } catch (error) {
+      return new Response(JSON.stringify({ error: "Proxy error", details: error }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
   }
   
