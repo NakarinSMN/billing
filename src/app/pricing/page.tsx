@@ -34,7 +34,7 @@ export default function PricingPage() {
       try {
         setLoading(true);
   
-        const res = await fetch("/api/gs-proxy", {
+        const res = await fetch('/.netlify/functions/gs-proxy', {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ method: "get" })
