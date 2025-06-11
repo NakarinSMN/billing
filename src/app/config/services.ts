@@ -21,3 +21,4 @@ export interface Service {
     { name: "เคลือบสีเงา",         carPrice: "2,200", motorcyclePrice: "1,100" },
   ];
   
+  
