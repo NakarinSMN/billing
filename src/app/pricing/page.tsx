@@ -27,18 +27,23 @@ export default function PricingPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const addRowRefs = useRef<HTMLTableRowElement[]>([]);
-
-  const SHEET_PROXY_URL = '@pages/api/gs-proxy';
+  
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        const res = await fetch(SHEET_PROXY_URL, {
+  
+        const res = await fetch("/api/gs-proxy", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ method: "get" })
         });
+  
+        if (!res.ok) {
+          throw new Error(`Status ${res.status}`);
+        }
+  
         const data = await res.json();
         const normalized = data.map((item: any) => ({
           name: item["บริการ"] ?? '',
@@ -53,9 +58,10 @@ export default function PricingPage() {
         setLoading(false);
       }
     };
-
+  
     fetchServices();
   }, []);
+  
 
   useEffect(() => {
     if (addRowRefs.current.length > 0 && editIndex === null) {
