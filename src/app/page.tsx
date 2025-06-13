@@ -97,10 +97,10 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="mt-8 flex flex-col items-center text-center text-sm text-gray-500 dark:text-gray-400">
+{/*         <div className="mt-8 flex flex-col items-center text-center text-sm text-gray-500 dark:text-gray-400">
           <p>ระบบการออกบิลสำหรับธุรกิจ</p>
           <p className="mt-1">ดูแลโดย smnDev</p>
-        </div>
+        </div> */}
 
         {/* Theme Toggle */}
         <div className="fixed top-4 sm:top-6 md:top-[105px] right-4 sm:right-10">
