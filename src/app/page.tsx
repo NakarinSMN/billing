@@ -61,8 +61,8 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center page-transition">
       <div className="w-full max-w-5xl px-4">
         <div className="flex justify-between items-center py-6 md:py-8">
-          <h1 className="text-2xl md:text-3xl font-bold">ระบบออกบิล</h1>
-          <Link
+          <h1 className="text-2xl md:text-3xl font-bold">ระบบปรับรอบพรบ. V.2</h1>
+{/*           <Link
             href="/dashboard"
             className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md px-3 py-1.5 text-sm flex items-center gap-1 hover:bg-blue-200 dark:hover:bg-blue-800/30 transition-colors"
           >
@@ -73,7 +73,7 @@ export default function Home() {
               <rect x="3" y="16" width="7" height="5"></rect>
             </svg>
             แดชบอร์ด
-          </Link>
+          </Link> */}
         </div>
 
         <div className="border-t border-gray-300 mb-6 md:mb-8" />
