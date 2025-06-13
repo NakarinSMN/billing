@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: "ปรับรอบพรบ. V.2",
   description: "Billing System",
   icons: {
-    icon: "/calendar-svgrepo-com.svg", // Path to your favicon file
+    icon: "/calendar-days-svgrepo-com.svg", // Path to your favicon file
     // You can also add other icons like apple-touch-icon:
     // apple: "/apple-icon.png",
   },
