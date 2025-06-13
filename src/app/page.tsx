@@ -25,36 +25,36 @@ export default function Home() {
   }, []);
 
   const navButtons: NavButton[] = [
-    {
-      href: "/car-billing",
-      icon: <CarIcon className="w-5 h-5" />,
-      text: "ออกบิลรถยนต์"
-    },
-    {
-      href: "/motorcycle-billing",
-      icon: <MotorcycleIcon className="w-5 h-5" />,
-      text: "ออกบิลรถจักรยานยนต์"
-    },
+    // {
+    //   href: "/car-billing",
+    //   icon: <CarIcon className="w-5 h-5" />,
+    //   text: "ออกบิลรถยนต์"
+    // },
+    // {
+    //   href: "/motorcycle-billing",
+    //   icon: <MotorcycleIcon className="w-5 h-5" />,
+    //   text: "ออกบิลรถจักรยานยนต์"
+    // },
     {
       href: "/adjust-carpet",
       icon: <CarpetIcon className="w-5 h-5" />,
       text: "ปรับรอบพรบ"
-    },
-    {
-      href: "/customer-info",
-      icon: <CustomerIcon className="w-5 h-5" />,
-      text: "ข้อมูลลูกค้า"
-    },
-    {
-      href: "/pricing",
-      icon: <PricingIcon className="w-5 h-5" />,
-      text: "ราคางาน"
-    },
-    {
-      href: "/about",
-      icon: <AboutIcon className="w-5 h-5" />,
-      text: "เกี่ยวกับเรา"
     }
+    // {
+    //   href: "/customer-info",
+    //   icon: <CustomerIcon className="w-5 h-5" />,
+    //   text: "ข้อมูลลูกค้า"
+    // },
+    // {
+    //   href: "/pricing",
+    //   icon: <PricingIcon className="w-5 h-5" />,
+    //   text: "ราคางาน"
+    // },
+    // {
+    //   href: "/about",
+    //   icon: <AboutIcon className="w-5 h-5" />,
+    //   text: "เกี่ยวกับเรา"
+    // }
   ];
 
   return (
